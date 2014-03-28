@@ -11,10 +11,13 @@
     }
     var moving = {};
 
-     scene.init = function(preloaded) {
+    var enemies = [];
+    var enemySpeed = 2;
+
+    scene.init = function(preloaded) {
         // Init player
         player = new cutie.Shape();
-        player.graphics.beginFill('#000000').drawRect(0, 0, 10, 10);
+        player.graphics.beginFill('#555555').drawRect(0, 0, 10, 10);
         player.width = 10;
         player.height = 10;
         player.speed = .5;
@@ -39,36 +42,55 @@
         }));
 
         // Init game timer
-        setInterval(spawnEnemy, 100);
+        setInterval(spawnEnemy, 1000);
     }
 
     scene.tick = function() {
-
-    }
-
-    function updateMovement() {
-        var stage = cutie.getStage();
-        var midX = cutie.WIDTH/2;
-        var midY = cutie.HEIGHT/2;
-        var topY = cutie.HEIGHT/3;
-        var bottomY = cutie.HEIGHT/3 * 2;
-        if (stage.mouseX  > midX && stage.mouseY > topY && stage.mouseY < bottomY) {
-            moving = moveType.RIGHT;
-        }
-        else if (stage.mouseX < midX && stage.mouseY > topY && stage.mouseY < bottomY) {
-            moving = moveType.LEFT;
-        }
-        else if (stage.mouseY < midY) {
-            moving = moveType.UP;
-        }
-        else {
-            moving = moveType.DOWN;
+        for (var i = 0; i < enemies.length; i++) {
+            enemies[i].x += enemies[i].vx;
+            enemies[i].y += enemies[i].vy;
         }
     }
-
 
     function spawnEnemy() {
         console.log('spawn');
+        e = new cutie.Shape();
+        e.graphics.beginFill('#000000').drawRect(0, 0, 20, 20);
+
+        var direction = Math.floor(Math.random() * 4);
+        switch(direction) {
+            case moveType.UP:
+                e.x = Math.random() * cutie.WIDTH;
+                e.y = cutie.HEIGHT/2 + 30;
+                e.vx = 0;
+                e.vy = -enemySpeed;
+                break;
+
+            case moveType.LEFT:
+                e.x = cutie.WIDTH + 30;
+                e.y = Math.random() * cutie.HEIGHT/2;
+                e.vx = -enemySpeed;
+                e.vy = 0;
+                break;
+
+            case moveType.DOWN:
+                e.x = Math.random() * cutie.WIDTH;
+                e.y = -30;
+                e.vx = 0;
+                e.vy = enemySpeed;
+                break;
+
+            case moveType.RIGHT:
+                e.x = -30;
+                e.y = Math.random() * cutie.HEIGHT/2;
+                e.vx = enemySpeed;
+                e.vy = 0;
+                break;
+        }
+        
+        cutie.getStage().addChild(e);
+        cutie.getStage().setChildIndex(e, 0);
+        enemies.push(e);
     }
 
     cutie.registerScene(scene, 'game');
