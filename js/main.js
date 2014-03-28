@@ -3,5 +3,7 @@ window.onload = function() {
     cutie.Log.setLogLevel(cutie.Log.VERBOSE);
 
     // Kick-off the game
-    cutie.start('title');
+    cutie.start('title', {
+        'scaleType': cutie.ScaleType.LETTERBOX
+    });
 }
