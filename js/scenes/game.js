@@ -19,15 +19,22 @@
         player.height = 10;
         player.speed = .5;
         player.x = cutie.WIDTH/2 - player.width/2;
-        player.y = cutie.HEIGHT/2 - player.height/2;
+        player.y = cutie.HEIGHT/4 - player.height/2;
         this.addChild(player);
 
+        // Put color under joystick thing
+        var joystickBkg = new cutie.Shape();
+        joystickBkg.graphics.beginFill('#dddddd').drawRect(0, 0, cutie.WIDTH, cutie.HEIGHT/2);
+        joystickBkg.y = cutie.HEIGHT/2;
+        this.addChild(joystickBkg);
+
+        // Add joystick
         player.addBehavior(new cutie.Behavior.JoystickMovement( {
             'speed': 15,
             'joystick': new cutie.Joystick({
                 'position': { 'x': cutie.WIDTH/2, 'y': cutie.HEIGHT/4 * 3 },
-                'baseDisk': { 'radius': 200 },
-                'pointerDisk': { 'radius': 50 }
+                'baseDisk': { 'radius': 200, 'color': '#555555' },
+                'pointerDisk': { 'radius': 80, 'color': '#333333' }
             })
         }));
 
