@@ -22,32 +22,21 @@
         player.y = cutie.HEIGHT/2 - player.height/2;
         this.addChild(player);
 
+        player.addBehavior(new cutie.Behavior.JoystickMovement( {
+            'speed': 15,
+            'joystick': new cutie.Joystick({
+                'position': { 'x': cutie.WIDTH/2, 'y': cutie.HEIGHT/4 * 3 },
+                'baseDisk': { 'radius': 200 },
+                'pointerDisk': { 'radius': 50 }
+            })
+        }));
+
         // Init game timer
         setInterval(spawnEnemy, 100);
-
-        // Determine movement
-        cutie.getStage().on('stagemousedown', updateMovement);
-        cutie.getStage().on('stagemousedown', function() {
-            moving = moveType.NONE;
-        });
-        cutie.getStage().on('stagemousemove', updateMovement);
     }
 
     scene.tick = function() {
-        switch(moving) {
-            case moveType.RIGHT:
-                player.x +=  player.speed;
-                break;
-            case moveType.LEFT:
-                player.x -=  player.speed;
-                break;
-            case moveType.UP:
-                player.y -=  player.speed;
-                break;
-            case moveType.DOWN:
-                player.y +=  player.speed;
-                break;
-        }
+
     }
 
     function updateMovement() {
