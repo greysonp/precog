@@ -13,6 +13,8 @@
 
     var enemies = [];
     var enemySpeed = 2;
+    var intervalId = 0;
+
 
     scene.init = function(preloaded) {
         // Init player
@@ -41,15 +43,51 @@
             })
         }));
 
+        // Collision groups
+        // this.registerCollisionGroup('enemies');
+        // this.registerCollisionGroup('player', {
+        //     'collidesWith': [{
+        //         'name': 'enemies',
+        //         'handle': function(obj1, obj2, pt) {
+        //             console.log('butt');
+        //             cutie.getActiveScene().removeChild(obj2);
+        //         }
+        //     }]
+        // });
+        // this.addCollidable(player, {
+        //     'groupName': 'player', 
+        //     'collisionType': 'rectangle'
+        // });
+
         // Init game timer
-        setInterval(spawnEnemy, 1000);
+        intervalId = setInterval(spawnEnemy, 250);
     }
 
     scene.tick = function() {
-        for (var i = 0; i < enemies.length; i++) {
-            enemies[i].x += enemies[i].vx;
-            enemies[i].y += enemies[i].vy;
+        for (var i = enemies.length - 1; i >= 0; i--) {
+            var e = enemies[i];
+            e.x += e.vx;
+            e.y += e.vy;
+            if (e.x > cutie.WIDTH + 50 || e.x < -50 || e.y > cutie.HEIGHT/2 + 50 || e.y < -50) {
+                cutie.getActiveScene().removeChild(e);
+                enemies.splice(i, 1);
+            }
+
+            if (checkCollide(player.x, player.y, player.width, player.height, e.x, e.y, 20, 20)) {
+                cutie.getActiveScene().removeChild(e);
+                enemies.splice(i, 1);
+                enemies = [];
+                cutie.getActiveScene().removeAllChildren();
+                clearInterval(intervalId);
+                cutie.setScene('gameOver', {'reset': true});
+                break;
+            }
         }
+    }
+
+    scene.reset = function() {
+        this.removeAllChildren();
+        this.enemies = [];
     }
 
     function spawnEnemy() {
@@ -87,11 +125,21 @@
                 e.vy = 0;
                 break;
         }
-        
-        cutie.getStage().addChild(e);
-        cutie.getStage().setChildIndex(e, 0);
+        // cutie.getActiveScene().addCollidable(e, {
+        //     'groupName': 'enemies', 
+        //     'collisionType': 'rectangle'
+        // });
+        cutie.getActiveScene().addChild(e);
+        cutie.getActiveScene().setChildIndex(e, 0);
         enemies.push(e);
     }
+
+    function checkCollide(x, y, oWidth, oHeight, xTwo, yTwo, oTwoWidth, oTwoHeight) {
+        if( x+oWidth < xTwo || x > xTwo+oTwoWidth ) return false;
+        if( y+oHeight < yTwo || y > yTwo+oTwoHeight ) return false;
+
+        return true;
+}
 
     cutie.registerScene(scene, 'game');
 })();
